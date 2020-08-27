@@ -8,14 +8,41 @@ export const firestore = firebase.firestore();
 
 const provider = new firebase.auth.GoogleAuthProvider();
 
-export const signInWithGoogle = () => {
-	auth.signInWithPopup(provider);
+export const signInWithGoogle = async () => {
+	try {
+		await auth.signInWithPopup(provider);
+	} catch (e) {
+		console.log({
+			code: e.code,
+			message: e.message,
+		});
+	}
 };
 
-export const signUpWithEmailAndPassword = (email: string, password: string) => {
-	auth.createUserWithEmailAndPassword(email, password);
+export const signUpWithEmailAndPassword = async (
+	email: string,
+	password: string,
+) => {
+	try {
+		await auth.createUserWithEmailAndPassword(email, password);
+	} catch (e) {
+		console.log({
+			code: e.code,
+			message: e.message,
+		});
+	}
 };
 
-export const signInWithEmailAndPassword = (email: string, password: string) => {
-	auth.signInWithEmailAndPassword(email, password);
+export const signInWithEmailAndPassword = async (
+	email: string,
+	password: string,
+) => {
+	try {
+		auth.signInWithEmailAndPassword(email, password);
+	} catch (e) {
+		console.log({
+			code: e.code,
+			message: e.message,
+		});
+	}
 };
