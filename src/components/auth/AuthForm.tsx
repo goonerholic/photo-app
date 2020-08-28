@@ -1,19 +1,25 @@
-import React, { ReactElement, useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React, { ReactElement } from 'react';
 import { Form, Input, Button, Divider } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
-import {
-	signInWithGoogle,
-	signInWithEmailAndPassword,
-	signUpWithEmailAndPassword,
-	auth,
-} from '../../utils/firebase';
-import { useHistory } from 'react-router-dom';
-import { RootState } from '../../modules';
-import { changeUser } from '../../modules/user';
+import { User } from 'firebase';
+// import {
+// 	signInWithGoogle,
+// 	signInWithEmailAndPassword,
+// 	signUpWithEmailAndPassword,
+// 	auth,
+// } from '../../utils/firebase';
 
 interface Props {
 	type: 'signin' | 'signup';
+	form: {
+		username: string;
+		password: string;
+		passwordConfirm?: string;
+	};
+	user: User | null;
+	onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+	onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+	onGoogleAuth: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
 const textMap = {
@@ -21,28 +27,26 @@ const textMap = {
 	signup: 'Sign Up',
 };
 
-export default function AuthForm({ type }: Props): ReactElement {
-	const { form, key, value } = useSelector(({ auth }: RootState) => ({}));
-	const user = useSelector((state: RootState) => state.user.user);
-	const dispatch = useDispatch();
-	const history = useHistory();
-
-	useEffect(() => {
-		auth.onAuthStateChanged((userAuth) => {
-			dispatch(changeUser(userAuth));
-		});
-	}, [dispatch]);
-
-	useEffect(() => {
-		if (user) {
-			history.push('/home');
-		}
-	}, [user, history]);
-
+export default function AuthForm({
+	type,
+	form,
+	user,
+	onChange,
+	onSubmit,
+	onGoogleAuth,
+}: Props): ReactElement {
+	if (user) {
+		return (
+			<div>
+				<h4>Already signed in!!</h4>
+				<p>{user.email}</p>
+			</div>
+		);
+	}
 	return (
 		<div>
 			<h4>{textMap[type]}</h4>
-			<Form name="auth">
+			<Form name="auth" onFinish={onSubmit}>
 				<Form.Item
 					name="username"
 					rules={[
@@ -54,8 +58,10 @@ export default function AuthForm({ type }: Props): ReactElement {
 				>
 					<Input
 						prefix={<UserOutlined className="site-form-item-icon" />}
+						name="username"
 						placeholder="username"
-						onChange={(e) => setUsername(e.target.value)}
+						onChange={onChange}
+						value={form.username}
 					/>
 				</Form.Item>
 				<Form.Item
@@ -68,10 +74,12 @@ export default function AuthForm({ type }: Props): ReactElement {
 					]}
 				>
 					<Input
+						name="password"
 						type="password"
 						prefix={<LockOutlined className="site-form-item-icon" />}
 						placeholder="password"
-						onChange={(e) => setPassword(e.target.value)}
+						onChange={onChange}
+						value={form.password}
 					/>
 				</Form.Item>
 				{type === 'signup' && (
@@ -85,27 +93,17 @@ export default function AuthForm({ type }: Props): ReactElement {
 						]}
 					>
 						<Input
+							name="passwordConfirm"
 							type="password"
 							prefix={<LockOutlined className="site-form-item-icon" />}
 							placeholder="confirm password"
-							onChange={(e) => setPasswordConfirm(e.target.value)}
+							onChange={onChange}
+							value={form.passwordConfirm}
 						/>
 					</Form.Item>
 				)}
 				<Form.Item>
-					<Button
-						type="primary"
-						block
-						onClick={() => {
-							if (type === 'signin') {
-								signInWithEmailAndPassword(username, password);
-							} else {
-								if (password && password === passwordConfirm) {
-									signUpWithEmailAndPassword(username, password);
-								}
-							}
-						}}
-					>
+					<Button htmlType="submit" type="primary" block>
 						{textMap[type]}
 					</Button>
 				</Form.Item>
@@ -115,7 +113,7 @@ export default function AuthForm({ type }: Props): ReactElement {
 						type="primary"
 						danger
 						block
-						onClick={signInWithGoogle}
+						onClick={onGoogleAuth}
 					>{`${textMap[type]} with Google`}</Button>
 				</Form.Item>
 			</Form>

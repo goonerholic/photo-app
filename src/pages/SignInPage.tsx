@@ -1,12 +1,12 @@
 import React, { ReactElement } from 'react';
 import AuthTemplate from './../components/auth/AuthTemplate';
-import AuthForm from './../components/auth/AuthForm';
+import SignInForm from './../containers/auth/SignInForm';
 
 export default function SignInPage(): ReactElement {
 	return (
 		<div>
 			<AuthTemplate>
-				<AuthForm type="signin" />
+				<SignInForm />
 			</AuthTemplate>
 		</div>
 	);

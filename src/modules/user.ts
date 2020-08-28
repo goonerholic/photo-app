@@ -1,25 +1,43 @@
-import { createAction, createReducer, ActionType } from 'typesafe-actions';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { User } from 'firebase';
 
-interface UserState {
-	user: User | null;
-}
+type UserState = User | null;
 
-const prefix = '@user';
+const initialState: UserState = null;
 
-const CHANGE_USER = `${prefix}/CHANGE_USER`;
-
-export const changeUser = createAction(CHANGE_USER, (user) => user)();
-
-const initialState: UserState = {
-	user: null,
-};
-
-const user = createReducer<UserState, ActionType<typeof changeUser>>(
+const userSlice = createSlice({
+	name: 'user',
 	initialState,
-).handleAction(changeUser, (state, { payload: user }) => ({
-	...state,
-	user,
-}));
+	reducers: {
+		setUser(state: UserState, { payload: user }: PayloadAction<User>) {
+			state = user;
+		},
+		signOut(state: UserState, _) {
+			state = null;
+		},
+	},
+});
 
+const { actions, reducer: user } = userSlice;
+export const { setUser, signOut } = actions;
 export default user;
+
+// import { createAction, createReducer } from '@reduxjs/toolkit';
+// import { User } from 'firebase';
+
+// type UserState = User | null;
+
+// const prefix = '@user';
+
+// export const changeUser = createAction(
+// 	`${prefix}/CHANGE_USER`,
+// 	(user: User) => ({
+// 		payload: user,
+// 	}),
+// );
+
+// const initialState: UserState = null;
+
+// const user = createReducer(initialState, (builder) =>
+// 	builder.addCase(changeUser, (_, { payload: user }) => user),
+// );
