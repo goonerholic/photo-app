@@ -1,7 +1,8 @@
 import React, { ReactElement } from 'react';
 import { Form, Input, Button, Divider } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
-import { User } from 'firebase';
+import { UserState } from '../../modules/user';
+import { signOut } from '../../utils/firebase';
 // import {
 // 	signInWithGoogle,
 // 	signInWithEmailAndPassword,
@@ -16,7 +17,7 @@ interface Props {
 		password: string;
 		passwordConfirm?: string;
 	};
-	user: User | null;
+	user: UserState | null;
 	onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 	onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
 	onGoogleAuth: (e: React.MouseEvent<HTMLButtonElement>) => void;
@@ -35,11 +36,20 @@ export default function AuthForm({
 	onSubmit,
 	onGoogleAuth,
 }: Props): ReactElement {
-	if (user) {
+	if (user && user.uid) {
+		console.log(user);
 		return (
 			<div>
 				<h4>Already signed in!!</h4>
 				<p>{user.email}</p>
+				<button
+					onClick={(e) => {
+						e.preventDefault();
+						signOut();
+					}}
+				>
+					Sign Out
+				</button>
 			</div>
 		);
 	}

@@ -20,7 +20,7 @@
 
 # settings
 .env
-config.js
+config.*
 
 npm-debug.log*
 yarn-debug.log*

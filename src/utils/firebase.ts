@@ -38,7 +38,18 @@ export const signInWithEmailAndPassword = async (
 	password: string,
 ) => {
 	try {
-		auth.signInWithEmailAndPassword(email, password);
+		await auth.signInWithEmailAndPassword(email, password);
+	} catch (e) {
+		console.log({
+			code: e.code,
+			message: e.message,
+		});
+	}
+};
+
+export const signOut = async () => {
+	try {
+		await auth.signOut();
 	} catch (e) {
 		console.log({
 			code: e.code,
