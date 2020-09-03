@@ -1,15 +1,15 @@
 import React from 'react';
 import { Route } from 'react-router-dom';
-import SignInPage from './pages/SignInPage';
-import SignUpPage from './pages/SignUpPage';
+import AuthPage from './pages/AuthPage';
 import './App.css';
 import 'antd/dist/antd.css';
+import MainPage from './pages/MainPage';
 
 function App() {
 	return (
 		<div className="App">
-			<Route component={SignInPage} path={['/', '/signin']} exact />
-			<Route component={SignUpPage} path="/signup" />
+			<Route component={AuthPage} path={['/', '/signin']} exact />
+			<Route component={MainPage} path="/main" />
 		</div>
 	);
 }

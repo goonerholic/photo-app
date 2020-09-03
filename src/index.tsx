@@ -8,10 +8,13 @@ import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import rootReducer from './modules';
+import { gapiInit } from './utils/gapi';
 
 const store = configureStore({
 	reducer: rootReducer,
 });
+
+gapiInit();
 
 ReactDOM.render(
 	<Provider store={store}>

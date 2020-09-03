@@ -22,32 +22,3 @@ body {
 html {
 	height: 100%;
 }
-
-a {
-	color: white;
-	text-decoration: none;
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-	font-weight: 700 !important;
-}
-
-code {
-	font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-		monospace;
-}
-
-.container {
-	max-width: 800px !important;
-}
-
-.btn:hover,
-.btn-small:hover,
-.btn-large:hover {
-	filter: brightness(120%);
-}
