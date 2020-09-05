@@ -1,17 +1,24 @@
 import React from 'react';
-import { Route } from 'react-router-dom';
+import { Route, Router, useHistory } from 'react-router-dom';
 import AuthPage from './pages/AuthPage';
 import './App.css';
 import 'antd/dist/antd.css';
 import MainPage from './pages/MainPage';
 
 function App() {
-	return (
-		<div className="App">
-			<Route component={AuthPage} path={['/', '/signin']} exact />
-			<Route component={MainPage} path="/main" />
-		</div>
-	);
+  const history = useHistory();
+  return (
+    <div className="App">
+      <Router history={history}>
+        <Route path="/" exact>
+          <MainPage />
+        </Route>
+        <Route path="/signin">
+          <AuthPage />
+        </Route>
+      </Router>
+    </div>
+  );
 }
 
 export default App;

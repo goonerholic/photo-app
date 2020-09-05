@@ -1,55 +1,68 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { User } from 'firebase';
+import { createSlice, PayloadAction, Action } from '@reduxjs/toolkit';
+import { AsyncState, asyncState } from '../utils/asyncState';
+import { call, put, all, takeLatest } from 'redux-saga/effects';
+import * as googleAPI from '../utils/gapi';
 
-export interface UserState {
-	username: string | null;
-	email: string | null;
-	uid: string | null;
+export interface UserInfo {
+  uid: string;
+  displayName: string;
+  photoURL: string;
+}
+
+interface UserState {
+  user: AsyncState<UserInfo, Error>;
 }
 
 const initialState: UserState = {
-	username: '',
-	email: '',
-	uid: '',
+  user: asyncState.initial(),
 };
 
 const userSlice = createSlice({
-	name: 'user',
-	initialState,
-	reducers: {
-		setUser(state: UserState, { payload: user }: PayloadAction<User>) {
-			state = { username: user.displayName, email: user.email, uid: user.uid };
-		},
-		signOut(state: UserState, _) {
-			state = {
-				username: '',
-				email: '',
-				uid: '',
-			};
-		},
-	},
+  name: 'user',
+  initialState,
+  reducers: {
+    signInRequest(state, _: Action) {
+      state.user = asyncState.load();
+    },
+    signInSuccess(state, { payload: userInfo }: PayloadAction<UserInfo>) {
+      state.user = asyncState.success(userInfo);
+    },
+    signInFailure(state, { payload: error }: PayloadAction<Error>) {
+      state.user = asyncState.error(error);
+    },
+    signOut(state, _: Action) {
+      state.user = asyncState.initial();
+    },
+  },
 });
 
+export const { signInSuccess, signInFailure } = userSlice.actions;
+
+function* signInSaga() {
+  try {
+    const response: UserInfo = yield call(googleAPI.signIn);
+    yield put(signInSuccess(response));
+  } catch (e) {
+    yield put(signInFailure(e));
+  }
+}
+
+function* signOutSaga() {
+  try {
+    yield call(googleAPI.signOut);
+    localStorage.removeItem('user');
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+export function* userSaga() {
+  yield all([
+    takeLatest('user/signInRequest', signInSaga),
+    takeLatest('user/signOut', signOutSaga),
+  ]);
+}
+
 const { actions, reducer: user } = userSlice;
-export const { setUser, signOut } = actions;
+export const { signInRequest, signOut } = actions;
 export default user;
-
-// import { createAction, createReducer } from '@reduxjs/toolkit';
-// import { User } from 'firebase';
-
-// type UserState = User | null;
-
-// const prefix = '@user';
-
-// export const changeUser = createAction(
-// 	`${prefix}/CHANGE_USER`,
-// 	(user: User) => ({
-// 		payload: user,
-// 	}),
-// );
-
-// const initialState: UserState = null;
-
-// const user = createReducer(initialState, (builder) =>
-// 	builder.addCase(changeUser, (_, { payload: user }) => user),
-// );
