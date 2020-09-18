@@ -9,7 +9,7 @@ export const firebaseAuth = firebase.auth();
 
 export async function gapiInit() {
   try {
-    await new Promise<Omit<gapi.auth2.GoogleAuth, 'then'>>((resolve) => {
+    return await new Promise<Omit<gapi.auth2.GoogleAuth, 'then'>>((resolve) => {
       gapi.load('client', () => {
         resolve(
           gapi.auth2.init({
@@ -54,15 +54,16 @@ export async function signIn() {
   }
 }
 
-export async function signOut() {
-  const googleAuth = gapi.auth2.getAuthInstance();
-  await googleAuth.signOut();
-  await firebaseAuth.signOut();
-  localStorage.removeItem('user');
+export function signOut() {
+  gapi.auth2.getAuthInstance().then((googleAuth) => {
+    console.log(googleAuth.currentUser.get());
+    googleAuth.signOut();
+  });
+  firebaseAuth.signOut();
 }
 
 export interface FetchOptions {
-  keywords: string[];
+  keywords?: string[];
   pageSize?: number;
   pageToken?: string;
 }
@@ -123,11 +124,11 @@ export async function fetchPhotos({
     const requestOptions: RequestOptions = {
       filters: {
         contentFilter: {
-          includedContentCategories: keywords,
+          includedContentCategories: keywords || [],
         },
       },
     };
-    if (pageSize) requestOptions.pageSize = pageSize;
+    requestOptions.pageSize = pageSize ? pageSize : 20;
     if (pageToken) requestOptions.pageToken = pageToken;
 
     const response = await gapi.client.request({

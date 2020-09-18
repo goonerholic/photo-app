@@ -10,7 +10,6 @@ import createSagaMiddleware from 'redux-saga';
 import rootReducer, { rootSaga } from './modules';
 import { gapiInit } from './utils/gapi';
 import { signInSuccess } from './modules/user';
-import { asyncState } from './utils/asyncState';
 
 const sagaMiddleware = createSagaMiddleware();
 const store = configureStore({

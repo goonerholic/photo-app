@@ -1,12 +1,14 @@
 import React, { ReactElement } from 'react';
-import MainContainer from './../containers/main/MainContainer';
-import Header from './../components/main/Header';
+import PhotosContianer from '../containers/main/PhotosContianer';
+import HeaderContainer from './../containers/main/HeaderContainer';
+import SearchFormContainer from './../containers/main/SearchFormContainer';
 
 export default function MainPage(): ReactElement {
   return (
     <div>
-      <Header />
-      <MainContainer />
+      <HeaderContainer />
+      <SearchFormContainer />
+      <PhotosContianer />
     </div>
   );
 }

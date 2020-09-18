@@ -1,14 +1,16 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AsyncState, asyncState } from '../utils/asyncState';
-import { call, put, all, takeLatest } from 'redux-saga/effects';
+import { call, put, takeLatest } from 'redux-saga/effects';
 import { fetchPhotos, FetchPhotoResponse } from '../utils/gapi';
-import { FetchOptions } from './../utils/gapi';
+import { FetchOptions, MediaItem } from './../utils/gapi';
 
 interface PhotoState {
-  photo: AsyncState<FetchPhotoResponse, Error>;
+  keywords: string[];
+  photo: AsyncState<FetchPhotoResponse>;
 }
 
 const initialState: PhotoState = {
+  keywords: [],
   photo: asyncState.initial(),
 };
 
@@ -16,6 +18,12 @@ const photoSlice = createSlice({
   name: 'photo',
   initialState,
   reducers: {
+    addKeyword(state, { payload: keyword }) {
+      state.keywords = [...state.keywords, keyword];
+    },
+    removeKeyword(state, { payload: keyword }) {
+      state.keywords = state.keywords.filter((kw) => kw !== keyword);
+    },
     fetchPhotoRequest: {
       reducer: (state, action: PayloadAction<FetchOptions>) => {
         state.photo = asyncState.load();
@@ -30,7 +38,16 @@ const photoSlice = createSlice({
       state,
       { payload: photoResponse }: PayloadAction<FetchPhotoResponse>,
     ) {
-      state.photo = asyncState.success(photoResponse);
+      const newPhotos = state.photo.data?.mediaItems
+        ? ([
+            ...state.photo.data.mediaItems,
+            photoResponse.mediaItems,
+          ] as MediaItem[])
+        : photoResponse.mediaItems;
+      state.photo = asyncState.success({
+        mediaItems: newPhotos,
+        nextPageToken: photoResponse.nextPageToken,
+      });
     },
     fetchPhotoFailure(state, { payload: error }: PayloadAction<Error>) {
       state.photo = asyncState.error(error);
@@ -42,6 +59,8 @@ const {
   fetchPhotoRequest,
   fetchPhotoSuccess,
   fetchPhotoFailure,
+  addKeyword,
+  removeKeyword,
 } = photoSlice.actions;
 
 function* fetchPhotoSaga(action: ReturnType<typeof fetchPhotoRequest>) {
@@ -61,5 +80,5 @@ export function* photoSaga() {
 }
 
 const { reducer: photo } = photoSlice;
-export { fetchPhotoRequest };
+export { fetchPhotoRequest, addKeyword, removeKeyword };
 export default photo;

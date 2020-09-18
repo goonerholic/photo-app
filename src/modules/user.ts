@@ -10,7 +10,7 @@ export interface UserInfo {
 }
 
 interface UserState {
-  user: AsyncState<UserInfo, Error>;
+  user: AsyncState<UserInfo>;
 }
 
 const initialState: UserState = {
@@ -30,13 +30,20 @@ const userSlice = createSlice({
     signInFailure(state, { payload: error }: PayloadAction<Error>) {
       state.user = asyncState.error(error);
     },
-    signOut(state, _: Action) {
+    signOut(state) {
       state.user = asyncState.initial();
     },
   },
 });
 
-export const { signInSuccess, signInFailure } = userSlice.actions;
+const {
+  signInRequest,
+  signInSuccess,
+  signInFailure,
+  signOut,
+} = userSlice.actions;
+
+console.log(signOut);
 
 function* signInSaga() {
   try {
@@ -63,6 +70,6 @@ export function* userSaga() {
   ]);
 }
 
-const { actions, reducer: user } = userSlice;
-export const { signInRequest, signOut } = actions;
+const { reducer: user } = userSlice;
+export { signInRequest, signOut, signInSuccess };
 export default user;
