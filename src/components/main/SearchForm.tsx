@@ -10,6 +10,7 @@ interface Props {
   onAdd: (keyword: string) => void;
   onRemove: (keyword: string) => void;
   onSubmit: (keywords: string[], pageSize?: number, pageToken?: string) => void;
+  onClear: () => void;
 }
 
 const categories = [
@@ -46,6 +47,7 @@ export default function SearchForm({
   onAdd,
   onRemove,
   onSubmit,
+  onClear,
 }: Props): ReactElement {
   return (
     <div>
@@ -78,14 +80,24 @@ export default function SearchForm({
         </Col>
       </Row>
       <Row justify="center">
-        <Col>
+        <Col
+          css={{
+            display: 'flex',
+            justifyContent: 'space-between',
+          }}
+        >
           <Button
+            type="primary"
             onClick={(e: React.MouseEvent) => {
               onSubmit(keywords, 50);
+            }}
+            css={{
+              marginRight: '1rem',
             }}
           >
             Search
           </Button>
+          <Button onClick={onClear}>선택 초기화</Button>
         </Col>
       </Row>
     </div>

@@ -24,6 +24,12 @@ const photoSlice = createSlice({
     removeKeyword(state, { payload: keyword }) {
       state.keywords = state.keywords.filter((kw) => kw !== keyword);
     },
+    initializePhotos(state) {
+      state.photo = asyncState.initial();
+    },
+    initializeKeywords(state) {
+      state.keywords = [];
+    },
     fetchPhotoRequest: {
       reducer: (state, action: PayloadAction<FetchOptions>) => {
         state.photo = asyncState.load();
@@ -45,8 +51,8 @@ const photoSlice = createSlice({
           ] as MediaItem[])
         : photoResponse.mediaItems;
       state.photo = asyncState.success({
-        mediaItems: newPhotos,
-        nextPageToken: photoResponse.nextPageToken,
+        mediaItems: newPhotos || [],
+        nextPageToken: photoResponse.nextPageToken || '',
       });
     },
     fetchPhotoFailure(state, { payload: error }: PayloadAction<Error>) {
@@ -61,6 +67,8 @@ const {
   fetchPhotoFailure,
   addKeyword,
   removeKeyword,
+  initializePhotos,
+  initializeKeywords,
 } = photoSlice.actions;
 
 function* fetchPhotoSaga(action: ReturnType<typeof fetchPhotoRequest>) {
@@ -80,5 +88,11 @@ export function* photoSaga() {
 }
 
 const { reducer: photo } = photoSlice;
-export { fetchPhotoRequest, addKeyword, removeKeyword };
+export {
+  fetchPhotoRequest,
+  addKeyword,
+  removeKeyword,
+  initializePhotos,
+  initializeKeywords,
+};
 export default photo;

@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import SearchForm from '../../components/main/SearchForm';
 import { RootState } from '../../modules';
@@ -6,6 +6,7 @@ import {
   addKeyword,
   fetchPhotoRequest,
   removeKeyword,
+  initializeKeywords,
 } from '../../modules/photos';
 
 export default function SearchFormContainer(): ReactElement {
@@ -19,6 +20,13 @@ export default function SearchFormContainer(): ReactElement {
     pageSize?: number,
     pageToken?: string,
   ) => dispatch(fetchPhotoRequest({ keywords, pageSize, pageToken }));
+  const onClear = () => dispatch(initializeKeywords());
+
+  useEffect(() => {
+    return function () {
+      dispatch(initializeKeywords());
+    };
+  }, [dispatch]);
 
   return (
     <SearchForm
@@ -26,6 +34,7 @@ export default function SearchFormContainer(): ReactElement {
       onAdd={onAdd}
       onRemove={onRemove}
       onSubmit={onSubmit}
+      onClear={onClear}
     />
   );
 }

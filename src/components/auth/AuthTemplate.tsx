@@ -39,7 +39,8 @@ export default function AuthTemplate({ children }: Props): ReactElement {
       >
         <h1>Photo Picker</h1>
         <p>
-          Choose one out of random-picked photos from your Google photo library.
+          Pick the best out of randomly curated photos from your Google photos
+          library.
         </p>
 
         {children}
