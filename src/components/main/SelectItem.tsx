@@ -1,6 +1,9 @@
 /**@jsx jsx */
 import React, { ReactElement } from 'react';
 import { jsx } from '@emotion/core';
+import { Tag } from 'antd';
+
+const { CheckableTag } = Tag;
 
 interface Props {
   isActive: boolean;
@@ -24,18 +27,34 @@ export default function SelectItem({
   };
 
   return (
-    <li
-      className={`selectItem${isActive ? ' active' : ''}`}
-      onClick={onClick}
+    <CheckableTag
+      // className={`selectItem${isActive ? ' active' : ''}`}
+      // onClick={onClick}
+      // css={{
+      //   minWidth: 120,
+      //   cursor: 'pointer',
+      //   border: '1px solid #51C7BF',
+      //   borderRadius: 8,
+      //   marginRight: 4,
+      //   marginBottom: 4,
+      //   textAlign: 'center',
+      //   '&.active': {
+      //     color: 'black',
+      //     backgroundColor: '#73DDD6',
+      //   },
+      //   '&:hover': {
+      //     backgroundColor: '#84EDE1',
+      //   },
+      // }}
+      key={title}
+      checked={isActive}
+      onChange={onClick}
       css={{
-        minWidth: 120,
-        cursor: 'pointer',
-        '&.active': {
-          color: 'blue',
-        },
+        marginBottom: '1rem',
+        minWidth: 110,
       }}
     >
-      <p>{title}</p>
-    </li>
+      {title}
+    </CheckableTag>
   );
 }
