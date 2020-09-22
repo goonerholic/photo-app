@@ -1,11 +1,13 @@
 import config from '../config';
 import firebase from 'firebase';
+import 'firebase/performance';
 
 const { client_id } = config.firebaseConfig;
 const { scope } = config;
 
 firebase.initializeApp(config.firebaseConfig);
-export const firebaseAuth = firebase.auth();
+const perf = firebase.performance();
+const firebaseAuth = firebase.auth();
 
 export async function gapiInit() {
   try {
