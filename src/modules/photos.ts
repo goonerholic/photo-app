@@ -40,6 +40,16 @@ const photoSlice = createSlice({
         };
       },
     },
+    loadMoreRequest: {
+      reducer: (state, action: PayloadAction<FetchOptions>) => {
+        state.photo = asyncState.load(state.photo.data);
+      },
+      prepare: ({ keywords, pageSize, pageToken }: FetchOptions) => {
+        return {
+          payload: { keywords, pageSize, pageToken },
+        };
+      },
+    },
     fetchPhotoSuccess(
       state,
       { payload: photoResponse }: PayloadAction<FetchPhotoResponse>,
@@ -47,7 +57,7 @@ const photoSlice = createSlice({
       const newPhotos = state.photo.data?.mediaItems
         ? ([
             ...state.photo.data.mediaItems,
-            photoResponse.mediaItems,
+            ...photoResponse.mediaItems,
           ] as MediaItem[])
         : photoResponse.mediaItems;
       state.photo = asyncState.success({
@@ -69,6 +79,7 @@ const {
   removeKeyword,
   initializePhotos,
   initializeKeywords,
+  loadMoreRequest,
 } = photoSlice.actions;
 
 function* fetchPhotoSaga(action: ReturnType<typeof fetchPhotoRequest>) {
@@ -85,6 +96,7 @@ function* fetchPhotoSaga(action: ReturnType<typeof fetchPhotoRequest>) {
 
 export function* photoSaga() {
   yield takeLatest('photo/fetchPhotoRequest', fetchPhotoSaga);
+  yield takeLatest('photo/loadMoreRequest', fetchPhotoSaga);
 }
 
 const { reducer: photo } = photoSlice;
@@ -94,5 +106,6 @@ export {
   removeKeyword,
   initializePhotos,
   initializeKeywords,
+  loadMoreRequest,
 };
 export default photo;

@@ -2,14 +2,18 @@
 import React, { ReactElement } from 'react';
 import { jsx } from '@emotion/core';
 import { MediaItem } from './../../utils/gapi';
-// import { FetchOptions } from './../../utils/gapi';
+import { FetchOptions } from './../../utils/gapi';
+import { Button } from 'antd';
+import { Divider } from 'antd';
+import Gallery from 'react-photo-gallery';
 
 interface Props {
   photos: MediaItem[] | null;
   keywords: string[];
   pageToken?: string;
   loading: boolean;
-  // fetchPhotos: (fetchOptions: FetchOptions) => void;
+  error: boolean;
+  loadMore: (fetchOptions: FetchOptions) => void;
 }
 
 export default function Photos({
@@ -17,7 +21,14 @@ export default function Photos({
   pageToken,
   keywords,
   loading,
+  error,
+  loadMore,
 }: Props): ReactElement {
+  const galleryPhoto = photos?.map((photo) => ({
+    src: photo.baseUrl,
+    width: parseInt(photo.mediaMetadata.width),
+    height: parseInt(photo.mediaMetadata.height),
+  }));
   // const loader = useRef<HTMLDivElement>(null);
   // const loadMore = useCallback(
   //   (entries: any) => {
@@ -49,11 +60,12 @@ export default function Photos({
     <div
       css={{
         maxWidth: 1200,
-        margin: '0 auto',
+        margin: '40px auto',
         textAlign: 'center',
       }}
     >
-      <div
+      {galleryPhoto && <Gallery photos={galleryPhoto} />}
+      {/* <div
         css={{
           display: 'flex',
           flexWrap: 'wrap',
@@ -73,7 +85,7 @@ export default function Photos({
               />
             ))
           : null}
-      </div>
+      </div> */}
       <div>
         {loading
           ? '로딩 중...'
@@ -83,7 +95,19 @@ export default function Photos({
           ? '검색 결과가 없습니다.'
           : ''}
       </div>
-      <div css={{ height: 200, display: 'block' }}>loader</div>
+      <div>{error && <div>Error</div>}</div>
+
+      {photos?.length && pageToken && !loading ? (
+        <div css={{ height: 200, display: 'block' }}>
+          <Divider plain>
+            <Button
+              onClick={() => loadMore({ keywords, pageSize: 50, pageToken })}
+            >
+              Load more
+            </Button>
+          </Divider>
+        </div>
+      ) : null}
     </div>
   );
 }

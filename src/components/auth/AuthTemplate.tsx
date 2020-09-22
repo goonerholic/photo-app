@@ -2,7 +2,6 @@
 import React, { ReactElement } from 'react';
 import { Row, Col } from 'antd';
 import { jsx } from '@emotion/core';
-import bgImg from '../../images/auth-background.jpg';
 interface Props {
   children: ReactElement;
 }
@@ -18,7 +17,7 @@ export default function AuthTemplate({ children }: Props): ReactElement {
         left: 0,
         bottom: 0,
         right: 0,
-        background: `url(${bgImg})`,
+        background: 'url("/auth-background.jpg")',
         backgroundSize: 'cover',
         backgroundColor: 'rgba(0, 0, 0, 0.7)',
         backgroundBlendMode: 'color',
