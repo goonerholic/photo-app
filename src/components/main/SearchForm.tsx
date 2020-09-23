@@ -89,7 +89,7 @@ export default function SearchForm({
           <Button
             type="primary"
             onClick={(e: React.MouseEvent) => {
-              onSubmit(keywords, 50);
+              onSubmit(keywords, 20);
             }}
             css={{
               marginRight: '1rem',

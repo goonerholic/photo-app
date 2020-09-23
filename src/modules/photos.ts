@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AsyncState, asyncState } from '../utils/asyncState';
-import { call, put, takeLatest } from 'redux-saga/effects';
+import { call, put, takeLatest, takeLeading } from 'redux-saga/effects';
 import { fetchPhotos, FetchPhotoResponse } from '../utils/gapi';
 import { FetchOptions, MediaItem } from './../utils/gapi';
 
@@ -96,7 +96,7 @@ function* fetchPhotoSaga(action: ReturnType<typeof fetchPhotoRequest>) {
 
 export function* photoSaga() {
   yield takeLatest('photo/fetchPhotoRequest', fetchPhotoSaga);
-  yield takeLatest('photo/loadMoreRequest', fetchPhotoSaga);
+  yield takeLeading('photo/loadMoreRequest', fetchPhotoSaga);
 }
 
 const { reducer: photo } = photoSlice;

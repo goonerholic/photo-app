@@ -130,7 +130,7 @@ export async function fetchPhotos({
         },
       },
     };
-    requestOptions.pageSize = pageSize ? pageSize : 20;
+    requestOptions.pageSize = pageSize ? pageSize : 10;
     if (pageToken) requestOptions.pageToken = pageToken;
 
     const response = await gapi.client.request({

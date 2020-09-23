@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect } from 'react';
+import React, { ReactElement, useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../modules';
 import { fetchPhotoRequest, loadMoreRequest } from '../../modules/photos';
@@ -19,9 +19,12 @@ export default function PhotosContianer(): ReactElement {
 
   const dispatch = useDispatch();
 
-  const loadMore = ({ keywords, pageSize, pageToken }: FetchOptions) => {
-    dispatch(loadMoreRequest({ keywords, pageSize, pageToken }));
-  };
+  const loadMore = useCallback(
+    ({ keywords, pageSize, pageToken }: FetchOptions) => {
+      dispatch(loadMoreRequest({ keywords, pageSize, pageToken }));
+    },
+    [dispatch],
+  );
 
   useEffect(() => {
     return function () {

@@ -1,11 +1,10 @@
 /**@jsx jsx */
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useCallback, useEffect, useRef } from 'react';
 import { jsx } from '@emotion/core';
 import { MediaItem } from './../../utils/gapi';
 import { FetchOptions } from './../../utils/gapi';
-import { Button } from 'antd';
-import { Divider } from 'antd';
 import Gallery from 'react-photo-gallery';
+import { Spin } from 'antd';
 
 interface Props {
   photos: MediaItem[] | null;
@@ -29,32 +28,26 @@ export default function Photos({
     width: parseInt(photo.mediaMetadata.width),
     height: parseInt(photo.mediaMetadata.height),
   }));
-  // const loader = useRef<HTMLDivElement>(null);
-  // const loadMore = useCallback(
-  //   (entries: any) => {
-  //     console.log(entries);
-  //     const target = entries[0];
-  //     console.log(target.isIntersecting);
-  //     console.log(target);
-  //     if (target.isIntersecting) {
-  //       fetchPhotos({ keywords, pageToken });
-  //     }
-  //   },
-  //   [fetchPhotos, pageToken, keywords],
-  // );
 
-  // useEffect(() => {
-  //   const options = {
-  //     root: null,
-  //     rootMargin: '0px',
-  //     threshold: 1,
-  //   };
+  const loader = useRef<HTMLDivElement | null>(null);
+  const observer = new IntersectionObserver((entries) => {
+    if (loading) return;
+    if (entries[0].isIntersecting && !loading && pageToken !== '') {
+      console.log('visible');
+      loadMore({ keywords, pageToken, pageSize: 20 });
+    }
+  });
 
-  //   const observer = new IntersectionObserver(loadMore, options);
-  //   if (loader && loader.current) {
-  //     observer.observe(loader.current as HTMLDivElement);
-  //   }
-  // }, [loadMore]);
+  useEffect(() => {
+    if (loading) return;
+    if (pageToken === '') return;
+    if (!photos || !photos.length) return;
+    if (loader.current) {
+      observer.observe(loader.current);
+    }
+
+    return () => observer && observer.disconnect();
+  }, [observer, pageToken, loading, photos]);
 
   return (
     <div
@@ -86,18 +79,24 @@ export default function Photos({
             ))
           : null}
       </div> */}
-      <div>
-        {loading
-          ? '로딩 중...'
-          : !photos
-          ? '사진을 검색해 보세요'
-          : !photos.length
-          ? '검색 결과가 없습니다.'
-          : ''}
+      <div
+        css={{
+          paddingTop: '2rem',
+        }}
+      >
+        {loading ? (
+          <Spin />
+        ) : !photos ? (
+          '사진을 검색해 보세요'
+        ) : !photos.length ? (
+          '검색 결과가 없습니다.'
+        ) : (
+          ''
+        )}
       </div>
       <div>{error && <div>Error</div>}</div>
 
-      {photos?.length && pageToken && !loading ? (
+      {/* {photos?.length && pageToken && !loading ? (
         <div css={{ height: 200, display: 'block' }}>
           <Divider plain>
             <Button
@@ -107,7 +106,8 @@ export default function Photos({
             </Button>
           </Divider>
         </div>
-      ) : null}
+      ) : null} */}
+      <div className="loader" ref={loader}></div>
     </div>
   );
 }
