@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect } from 'react';
+import React, { ReactElement } from 'react';
 import AuthForm from './../../components/auth/AuthForm';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../modules/index';

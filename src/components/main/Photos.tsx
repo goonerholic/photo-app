@@ -1,5 +1,5 @@
 /**@jsx jsx */
-import React, { ReactElement, useCallback, useEffect, useRef } from 'react';
+import { ReactElement, useEffect, useRef } from 'react';
 import { jsx } from '@emotion/core';
 import { MediaItem } from './../../utils/gapi';
 import { FetchOptions } from './../../utils/gapi';

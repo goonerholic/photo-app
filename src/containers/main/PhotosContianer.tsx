@@ -1,7 +1,7 @@
 import React, { ReactElement, useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../modules';
-import { fetchPhotoRequest, loadMoreRequest } from '../../modules/photos';
+import { loadMoreRequest } from '../../modules/photos';
 import Photos from './../../components/main/Photos';
 import { FetchOptions } from './../../utils/gapi';
 import { initializePhotos } from '../../modules/photos';

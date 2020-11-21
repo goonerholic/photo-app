@@ -38,9 +38,7 @@ export async function signIn() {
     const { id_token } = googleUser.getAuthResponse();
     const credential = firebase.auth.GoogleAuthProvider.credential(id_token);
     const userCredential = await firebaseAuth.signInWithCredential(credential);
-    console.log(userCredential);
     const user = userCredential.user as firebase.User;
-    console.log(user);
     const { uid, displayName, photoURL } = user;
     localStorage.setItem(
       'user',
